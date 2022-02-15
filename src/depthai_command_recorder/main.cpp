@@ -84,11 +84,12 @@ int main(int argc, char *argv[])
     }
 
 
-    int fps = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / images.size();
+    int fps = (int)(images.size() / (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0));
     std::cout << "FPS: " << fps << std::endl;
 
     //print time
     std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
+    std::cout << "Frame Count: " << images.size() << endl;
 
     cv::VideoWriter writer("output.mp4", fourcc, fps, cv::Size(images[0].cols, images[0].rows), true);
     for(int i = 0; i < images.size(); i++){
