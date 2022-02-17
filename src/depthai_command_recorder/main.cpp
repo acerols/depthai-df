@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
     auto xoutLeft = pipeline.create<dai::node::XLinkOut>();
     auto xoutRight = pipeline.create<dai::node::XLinkOut>();
 
+    auto imu = pipeline.create<dai::node::IMU>();
+
     xoutLeft->setStreamName("left");
     xoutRight->setStreamName("right");
 
@@ -28,32 +30,20 @@ int main(int argc, char *argv[])
     monoRight->setBoardSocket(dai::CameraBoardSocket::RIGHT);
     monoRight->setResolution(dai::MonoCameraProperties::SensorResolution::THE_400_P);
 
+    monoLeft->setFps(30);
+    monoRight->setFps(30);
+
     monoRight->out.link(xoutRight->input);
     monoLeft->out.link(xoutLeft->input);
 
     dai::Device device(pipeline);
 
-    auto qleft = device.getOutputQueue("left", 4, false);
-    auto qright = device.getOutputQueue("right", 4, false);
+    auto qleft = device.getOutputQueue("left", 256, false);
+    auto qright = device.getOutputQueue("right", 256, false);
 
     int fourcc = cv::VideoWriter::fourcc('M', 'P', '4', 'V');
-    
-
-    QApplication test(argc, argv);
-    QMainWindow w;
-    QImage qimage;
-    QLabel label;
 
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now(), end;
-
-    // set qt layout
-    QVBoxLayout layout;
-    layout.addWidget(&label);
-    
-    // add button to layout
-    QPushButton button("Start");
-    layout.addWidget(&button);
-    w.setLayout(&layout);
 
     vector<cv::Mat> images;
 
