@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/depthai-core EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/mono)
 
 set(RECODER depthai_command_recorder)
 project(${RECODER})
@@ -10,18 +11,23 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 add_executable("${RECODER}"
     src/${RECODER}/main.cpp
+    src/gui.cpp
+)
+
+target_include_directories(${RECODER} PUBLIC
+    ${OpenCV_INCLUDE_DIRS}
+    ${Qt5_INCLUDE_DIRS}
+    ./mono/include
+    ${CMAKE_CURRENT_LIST_DIR}/include/
 )
 
 target_link_libraries(${RECODER}
     PUBLIC
-        depthai::opencv
+        depthai::core
         Qt5::Widgets
         ${OpenCV_LIBS} # optional, used for example
+    mono
 )
-
-if(NOT MSVC)
-    target_compile_options(${RECODER} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Werror=return-type>)
-endif()
 
 
 set_property(TARGET ${RECODER} PROPERTY CXX_STANDARD 11)
