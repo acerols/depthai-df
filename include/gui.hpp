@@ -22,11 +22,13 @@ public:
     ~MainWindow();
     void initUI();
     void openFileDialog();
+    void recVideo();
     void moviePlay();
     void movieStop();
     void showNextFrame();
     void setImage(const cv::Mat &image);
     void paintEvent(QPaintEvent *event);
+    void Update();
 
     QImage Cv2QImage(const cv::Mat& mat);
 
@@ -40,6 +42,7 @@ private:
     int frame_pos;
     int fps;
     QImage image;
+    QLabel *label;
     bool moviePlayFlag;
 
 };

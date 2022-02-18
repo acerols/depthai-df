@@ -15,24 +15,33 @@ void MainWindow::initUI()
     QWidget *widget = new QWidget(this);
     this->setCentralWidget(widget);
     QHBoxLayout *layout = new QHBoxLayout(widget);
-    QLabel *label = new QLabel(widget);
+    label = new QLabel(widget);
     layout->addWidget(label);
-    QPushButton *openFileDialog = new QPushButton("openFileDialog", widget);
-    layout->addWidget(openFileDialog);
-    QPushButton *moviePlay = new QPushButton("moviePlay", widget);
-    layout->addWidget(moviePlay);
-    QPushButton *movieStop = new QPushButton("movieStop", widget);
-    layout->addWidget(movieStop);
-    QPushButton *showNextFrame = new QPushButton("showNextFrame", widget);
-    layout->addWidget(showNextFrame);
-    QObject::connect(openFileDialog, SIGNAL(clicked()), this, SLOT(openFileDialog()));
-    QObject::connect(moviePlay, SIGNAL(clicked()), this, SLOT(moviePlay()));
-    QObject::connect(movieStop, SIGNAL(clicked()), this, SLOT(movieStop()));
-    QObject::connect(showNextFrame, SIGNAL(clicked()), this, SLOT(showNextFrame()));
+    QPushButton *recVideoButtion = new QPushButton("Record Video", widget);
+    layout->addWidget(recVideoButtion);
+    connect(recVideoButtion, SIGNAL(clicked()), this, SLOT(recVideo()));
+
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, &QTimer::timeout, this, &MainWindow::Update);
+    timer->start(1000/30);
+
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::Update()
+{
+    if(!image.isNull())
+    {
+        std::cout << "update" << std::endl;
+        QPixmap pixmap = QPixmap::fromImage(image);
+        //pixmap = pixmap.scaled(QSize(30, 30));
+        // print pixmap info
+        std::cout << "pixmap.width() = " << pixmap.width() << std::endl;
+        label->setPixmap(pixmap);
+    }
 }
 
 void MainWindow::moviePlay()
@@ -43,6 +52,11 @@ void MainWindow::moviePlay()
 void MainWindow::movieStop()
 {
     moviePlayFlag = false;
+}
+
+void MainWindow::recVideo()
+{
+    std::cout << "recVideo" << std::endl;
 }
 
 void MainWindow::showNextFrame()
@@ -70,8 +84,7 @@ void MainWindow::setImage(const cv::Mat &image)
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
-    QPainter painter(this);
-    painter.begin(this);
+    /*
     // print debug info
     std::cout << "frame_pos: " << frame_pos << std::endl;
     
@@ -79,10 +92,12 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     if(!image.isNull())
     {
+        QPainter painter(this);
         std::cout << "show image" << std::endl;
         painter.drawImage(QPoint(0, 0), image);
         painter.end();
     }
+    */    
 }
 
 QImage MainWindow::Cv2QImage(const cv::Mat& mat)
